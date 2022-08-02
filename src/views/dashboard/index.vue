@@ -5,14 +5,35 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// 引入存入本地的cokkies
+import Cookies from 'js-cookie'
+// 引入｛获取用户信息｝请求API
+import { getUserInfoAPI } from '@/api/user'
+// import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
+  data() {
+    return {
+      name: ''
+    }
+  },
+  created() {
+    this.getUserInfo()
+  },
   computed: {
-    ...mapGetters([
-      'name'
-    ])
+    // 获取登录后的用户id
+    userId() {
+      return Cookies.get('userId')
+    }
+  },
+  methods: {
+    async getUserInfo() {
+      try {
+        const res = await getUserInfoAPI(this.userId)
+        console.log(res)
+      } catch (error) {}
+    }
   }
 }
 </script>

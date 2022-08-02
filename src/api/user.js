@@ -1,24 +1,11 @@
 import request from '@/utils/request'
 
-export function login(data) {
-  return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
-    data
+/**
+ *获取用户基本信息
+ * @param {String} id 用户id
+ * @returns  Promise
+ */
+export const getUserInfoAPI = (id) =>
+  request({
+    url: `/user-service/user/${id}`
   })
-}
-
-export function getInfo(token) {
-  return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
-  })
-}

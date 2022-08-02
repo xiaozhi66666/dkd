@@ -4,23 +4,30 @@
     <div class="login-box">
       <!-- 登录图标 -->
       <div class="login-icon">
-        <img src="../../assets/404_images/images/login/loginicon.png" alt="">
+        <img src="~@/assets/404_images/images/login/loginicon.png" alt="" />
       </div>
       <!-- 主体内容区域 -->
       <div class="login-form">
         <div style="margin: 20px" />
-        <el-form :label-position="labelPosition" :model="formLabelAlign">
-          <el-form-item>
+        <el-form
+          :label-position="labelPosition"
+          :model="loginForm"
+          :rules="loginFormRules"
+          ref="loginForm"
+        >
+          <el-form-item prop="loginName">
             <el-input
-              v-model="formLabelAlign.name"
               prefix-icon="el-icon-mobile-phone"
+              placeholder="请输入账号/手机号"
+              v-model="loginForm.loginName"
             />
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="password">
             <el-input
               ref="password"
-              v-model="formLabelAlign.region"
               prefix-icon="el-icon-lock"
+              placeholder="请输入密码"
+              v-model="loginForm.password"
             >
               <div slot="suffix">
                 <i
@@ -32,19 +39,27 @@
                   v-else
                   class="dikede dkd-yanjing1"
                   @click="isShowPass"
-                /></div></el-input>
+                /></div
+            ></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-input v-model="formLabelAlign.type" class="last-rz-input">
+          <el-form-item prop="code">
+            <el-input
+              class="last-rz-input"
+              placeholder="请输入验证码"
+              v-model="loginForm.code"
+              @change="login"
+            >
               <p slot="prefix" class="login-rz-icon">
                 <i class="dikede dkd-shimingrenzheng" />
               </p>
             </el-input>
             <div class="login-code" @click="refreshCode">
-              <Sldentuty :identify-code="identifyCode" />
+              <img src="" alt="" ref="codeImg" />
             </div>
           </el-form-item>
-          <el-button type="primary" class="login-btn">login</el-button>
+          <el-button type="primary" class="login-btn" @click="login"
+            >login</el-button
+          >
         </el-form>
       </div>
     </div>
@@ -52,33 +67,104 @@
 </template>
 
 <script>
-import Sldentuty from './components/SIdentity.vue'
+import { getCodeImgAPI, getNum } from '@/api/public'
+// import { createNamespacedHelpers } from 'vuex'
+// const { mapState: mapStateUser } = createNamespacedHelpers('user')
 export default {
-  components: {
-    Sldentuty
-  },
+  components: {},
   data() {
     return {
       labelPosition: 'right',
-      formLabelAlign: {
-        name: '',
-        region: '',
-        type: ''
-      },
       isShow: false,
-      identifyCodes: '123456789',
-      identifyCode: ''
+      // 收集登录所需的信息
+      loginForm: {
+        clientToken: '',
+        code: '', //验证图片的数字
+        loginName: 'admin',
+        loginType: 0, //登录类型 0：后台；1：运营运维端；2：合作商后台
+        password: 'admin'
+      },
+      // 表单验证规则
+      loginFormRules: {
+        // 用户名/账号
+        loginName: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          {
+            pattern: /^[a-z]+$/,
+            message: '请输入admin',
+            trigger: 'blur'
+          }
+        ],
+        code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            pattern: /^[a-z]+$/,
+            message: '请输入admin',
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
+  created() {
+    // 调用获取图片验证码
+    this.getCodeImg()
+  },
   mounted() {
-    // 初始化验证码
-    this.identifyCode = ''
-    this.makeCode(this.identifyCodes, 4)
+    // 初始化验证
+  },
+  computed: {
+    //  获取是否登录成功的状态，登录接口返回的success
+    success() {
+      return this.$store.state.user.success || false
+    }
   },
   methods: {
     onSubmit() {
       console.log('submit!')
     },
+    // 获取图片验证码
+    async getCodeImg() {
+      this.loginForm.clientToken = getNum()
+      try {
+        const res = await getCodeImgAPI(this.loginForm.clientToken)
+        // 将获取到的图片地址给图片的src
+        this.$refs.codeImg.src = res.request.responseURL
+      } catch (error) {
+        this.$message.error('获取验证码失败，请稍后重试！')
+      }
+    },
+    // 登录
+    login() {
+      // 添加判断，如果校验通过，就发送请求获取验证码
+      this.$refs.loginForm.validate(async (result) => {
+        //没通过，return
+        if (!result) {
+          this.$message.error('请输入验证码！')
+          return
+        }
+        // 校验通过发请求
+        // 触发存储user/token的action
+        // this.$dispatch返回一个promise
+        await this.$store.dispatch('user/getToken', this.loginForm)
+        if (this.success) {
+          this.$router.push('/dashboard')
+          this.$message({
+            showClose: true,
+            message: '登录成功！',
+            type: 'success'
+          })
+        } else {
+          this.$message.error('验证码不正确！，请检查后重新输入')
+        }
+      })
+    },
+    // 点击重新获取新的验证码图片
+    refreshCode() {
+      this.getCodeImg()
+    },
+    // 是否显示密码可见
     isShowPass() {
       this.isShow = !this.isShow
       if (this.isShow) {
@@ -86,41 +172,6 @@ export default {
       } else {
         this.$refs.password.type = 'text'
       }
-    },
-    randomNum(min, max) {
-      return Math.floor(Math.random() * (max - min) + min)
-    },
-    refreshCode() {
-      this.identifyCode = ''
-      this.makeCode(this.identifyCodes, 4)
-    },
-    makeCode(o, l) {
-      for (let i = 0; i < l; i++) {
-        this.identifyCode +=
-          this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
-      }
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        console.log(valid)
-        if (valid) {
-          alert('submit!')
-          // 发送请求给后台,请求数据成功之后
-          this.$router.push('/home')
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    created() {
-      this.refreshCode()
-    },
-    registerClick() {
-      this.$router.push('/register')
-    },
-    Forgetpass() {
-      this.$router.push('/forget')
     }
   }
 }
@@ -136,6 +187,9 @@ export default {
   background-image: url('../../assets/404_images/images/login/bg.png');
   background-size: cover;
   background-repeat: no-repeat;
+  .login-rz-icon {
+    line-height: 52px;
+  }
   // 登录框
   .login-box {
     position: relative;
@@ -166,17 +220,23 @@ export default {
       .login-code {
         position: absolute;
         right: 0;
-        top: 0;
+        top: 1px;
       }
       // 表单框
-      .el-input__inner {
+      /deep/.el-input__inner {
         height: 52px;
+        padding-left: 40px;
 
         .last-rz-input {
           position: relative;
         }
         .el-input--prefix .el-input__inner {
           position: relative;
+        }
+      }
+      .el-input__suffix {
+        div {
+          line-height: 52px;
         }
       }
       .login-rz-icon {
