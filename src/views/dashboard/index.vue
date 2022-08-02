@@ -19,21 +19,21 @@ export default {
     }
   },
   created() {
-    this.getUserInfo()
+    // this.getUserInfo()
   },
   computed: {
     // 获取登录后的用户id
-    userId() {
-      return Cookies.get('userId')
-    }
+    // userId() {
+    //   return Cookies.get('userId')
+    // }
   },
   methods: {
-    async getUserInfo() {
-      try {
-        const res = await getUserInfoAPI(this.userId)
-        console.log(res)
-      } catch (error) {}
-    }
+    // async getUserInfo() {
+    //   try {
+    //     const res = await getUserInfoAPI(this.userId)
+    //     console.log(res)
+    //   } catch (error) {}
+    // }
   }
 }
 </script>

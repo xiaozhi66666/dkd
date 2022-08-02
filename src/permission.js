@@ -7,6 +7,9 @@ router.beforeEach((to, form, next) => {
   // 分两种情况
   // 1：已登录
   if (token) {
+    // 发起请求用户信息的请求
+    // 防止在用户频繁切换页面组件的时候会频繁发送请求用户信息的请求
+    store.dispatch('user/getUserInfo')
     // 不可以再次访问login
     to.path === '/login' ? next('/') : next()
   } else {

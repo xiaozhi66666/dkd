@@ -1,5 +1,6 @@
 // 引入登录API获取token
 import { getLoginTokenAPI } from '@/api/public'
+import { getUserInfoAPI } from '@/api/user'
 // 引入存入本地的cokkies
 import Cookies from 'js-cookie'
 
@@ -7,7 +8,8 @@ export default {
   namespaced: true,
   state: {
     token: Cookies.get('userToken'), //用户token
-    success: ''
+    success: '',
+    userInfo: {} //存储用户信息
   },
   mutations: {
     setToken(state, payloade) {
@@ -17,18 +19,25 @@ export default {
       Cookies.set('userToken', payloade.token)
       Cookies.set('userName', payloade.userName)
       Cookies.set('userId', payloade.userId)
+    },
+    // 设置用户信息
+    setUserInfo(state, payload) {
+      state.userInfo = payload
     }
   }, //
   actions: {
     // 获取token
     async getToken(context, payloade) {
-      try {
-        const res = await getLoginTokenAPI(payloade)
-        context.commit('setToken', res.data)
-      } catch (error) {
-        this.$message.error('获取验证码失败，请稍后重试！')
-      }
+      const userToken = await getLoginTokenAPI(payloade)
+      // console.log(userToken)
+      context.commit('setToken', userToken.data)
+    },
+    async getUserInfo(context) {
+      // 获取用户信息
+      const userInfo = await getUserInfoAPI(Cookies.get('userId'))
+      // console.log(userInfo)
+      // 将用户信息存入到vuex
+      context.commit('setUserInfo', { ...userInfo.data })
     }
-    // 获取用户信息
   }
 }

@@ -4,7 +4,7 @@
     <div class="login-box">
       <!-- 登录图标 -->
       <div class="login-icon">
-        <img src="~@/assets/404_images/images/login/loginicon.png" alt="" />
+        <img src="~@/assets/images/login/loginicon.png" alt="" />
       </div>
       <!-- 主体内容区域 -->
       <div class="login-form">
@@ -57,7 +57,11 @@
               <img src="" alt="" ref="codeImg" />
             </div>
           </el-form-item>
-          <el-button type="primary" class="login-btn" @click="login"
+          <el-button
+            type="primary"
+            class="login-btn"
+            @click="login"
+            :loading="loading"
             >login</el-button
           >
         </el-form>
@@ -104,7 +108,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      loading: false //按钮加载状态
     }
   },
   created() {
@@ -129,14 +134,20 @@ export default {
       this.loginForm.clientToken = getNum()
       try {
         const res = await getCodeImgAPI(this.loginForm.clientToken)
+        console.log(res)
         // 将获取到的图片地址给图片的src
-        this.$refs.codeImg.src = res.request.responseURL
+        // console.log(res)
+        // 将blob格式的文件转换为可识别的base格式文件  URL.createObjectURL(blob)
+        const imgSrc = URL.createObjectURL(res.data)
+        // console.log(imgSrc)
+        this.$refs.codeImg.src = imgSrc
       } catch (error) {
         this.$message.error('获取验证码失败，请稍后重试！')
       }
     },
     // 登录
     login() {
+      this.loading = true
       // 添加判断，如果校验通过，就发送请求获取验证码
       this.$refs.loginForm.validate(async (result) => {
         //没通过，return
@@ -147,16 +158,20 @@ export default {
         // 校验通过发请求
         // 触发存储user/token的action
         // this.$dispatch返回一个promise
-        await this.$store.dispatch('user/getToken', this.loginForm)
-        if (this.success) {
-          this.$router.push('/dashboard')
-          this.$message({
-            showClose: true,
-            message: '登录成功！',
-            type: 'success'
-          })
-        } else {
-          this.$message.error('验证码不正确！，请检查后重新输入')
+        try {
+          await this.$store.dispatch('user/getToken', this.loginForm)
+          if (this.success) {
+            this.$router.push('/dashboard')
+            this.$message({
+              showClose: true,
+              message: '登录成功！',
+              type: 'success'
+            })
+          } else {
+            this.$message.error('验证码不正确！，请检查后重新输入')
+          }
+        } finally {
+          this.loading = false
         }
       })
     },
@@ -184,7 +199,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('../../assets/404_images/images/login/bg.png');
+  background-image: url('../../assets/images/login/bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   .login-rz-icon {

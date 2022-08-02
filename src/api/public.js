@@ -85,7 +85,8 @@ export const getNum = () => {
  */
 export const getCodeImgAPI = (randomNum) =>
   request({
-    url: `/user-service/user/imageCode/${randomNum}`
+    url: `/user-service/user/imageCode/${randomNum}`,
+    responseType: 'blob'
   })
 
 /**

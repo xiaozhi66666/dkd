@@ -12,17 +12,17 @@ $panGreen: #30B08F;
 $green1: #44b549;
 
 // sidebar
-$menuText:#ffffff;
+$menuText:black;
 $menuActiveText:#409EFF;
 $subMenuActiveText:#f4f4f5; // https://github.com/ElemeFE/element/issues/12951
 
 $menuBg: transparent;
-$menuHover:#ffffff;
+$menuHover:#eee;  //鼠标经过左侧菜单栏的颜色
 
 
 
-$subMenuBg:#1f2d3d;
-$subMenuHover:#001528;
+$subMenuBg:#fff;  //子菜单的背景色
+$subMenuHover:#5373e0; //鼠标经过子菜单的背景色
 
 $sideBarWidth: 210px;
 
