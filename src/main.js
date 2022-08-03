@@ -14,7 +14,8 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
-
+// 引入derectives中所有的数据
+import * as derectives from '@/derectives'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -28,6 +29,11 @@ if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
 
+// 对象循环将指令全部存入Vue.derective
+for (let key in derectives) {
+  Vue.directive([key], derectives[key])
+}
+// Vue.directive('imgError', imgError)
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

@@ -28,16 +28,32 @@ export default {
   actions: {
     // 获取token
     async getToken(context, payloade) {
+      // 在获取用户token的时候获取即时的时间戳，并存入cookies
+      Cookies.set('tokenTime', Date.now())
       const userToken = await getLoginTokenAPI(payloade)
-      // console.log(userToken)
+      console.log(userToken)
       context.commit('setToken', userToken.data)
     },
+    // 获取用户信息
     async getUserInfo(context) {
-      // 获取用户信息
+      console.log('getUserInfo')
+      console.log(Cookies.get('userId'))
       const userInfo = await getUserInfoAPI(Cookies.get('userId'))
       // console.log(userInfo)
+      // console.log(userInfo)
       // 将用户信息存入到vuex
-      context.commit('setUserInfo', { ...userInfo.data })
+      // console.log(userInfo)
+      context.commit('setUserInfo', userInfo.data)
+    },
+    // 退出登录
+    logout(context) {
+      // 清空token
+      context.commit('setToken', {})
+      Cookies.remove('userToken')
+      // 清空用户信息
+      context.commit('setUserInfo', {})
+      Cookies.remove('userName')
+      Cookies.remove('userId')
     }
   }
 }

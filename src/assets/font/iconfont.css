@@ -1,8 +1,8 @@
 @font-face {
   font-family: "dikede"; /* Project id 3557757 */
-  src: url('iconfont.woff2?t=1659186042312') format('woff2'),
-       url('iconfont.woff?t=1659186042312') format('woff'),
-       url('iconfont.ttf?t=1659186042312') format('truetype');
+  src: url('iconfont.woff2?t=1659504109008') format('woff2'),
+       url('iconfont.woff?t=1659504109008') format('woff'),
+       url('iconfont.ttf?t=1659504109008') format('truetype');
 }
 
 .dikede {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.dkd-dengpao:before {
+  content: "\e609";
+}
+
+.dkd-renyuanguanli:before {
+  content: "\e62d";
+}
+
+.dkd-zhanghuduizhang:before {
+  content: "\e627";
+}
+
+.dkd-gongdan:before {
+  content: "\e6d9";
+}
+
+.dkd-dingwei:before {
+  content: "\e616";
+}
+
+.dkd-shebei:before {
+  content: "\e617";
+}
+
+.dkd-zhuye:before {
+  content: "\e633";
+}
+
+.dkd-wodedingdan:before {
+  content: "\e61e";
+}
+
+.dkd-pintu:before {
+  content: "\e603";
 }
 
 .dkd-shimingrenzheng:before {

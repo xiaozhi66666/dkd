@@ -3,17 +3,30 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          头像区域
-          <img :src="$store.state.user.userInfo.image" class="img" />
-          <span>欢迎您,{{ $store.state.user.userInfo.roleName }} </span
-          ><i class="loginout">退出</i>
+          <img
+            :src="
+              $store.state.user.userInfo.image
+                ? $store.state.user.userInfo.image
+                : '12'
+            "
+            class="img"
+            v-imgError="imgError"
+          />
+          <span class="wellcom"
+            >欢迎您,{{ $store.state.user.userInfo.roleName }}
+          </span>
+          <el-popover
+            placement="top-start"
+            width="6"
+            trigger="hover"
+            content="退出登录"
+          >
+            <span slot="reference" class="loginout" @click="loginOut"
+              >退出</span
+            >
+          </el-popover>
           <i class="el-icon-caret-bottom" />
         </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">退出登录</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
       </el-dropdown>
     </div>
   </div>
@@ -23,11 +36,16 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import imgError from '@/assets/images/layout/avatarError.png'
 export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      imgError
+    }
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar'])
@@ -36,9 +54,9 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    logout() {
-      console.log(22)
-      this.$store.dispatch('user/logout')
+    // 退出
+    async loginOut() {
+      await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
@@ -47,7 +65,7 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 50px;
+  height: 60px;
   overflow: hidden;
   position: relative;
   // background: red;
@@ -108,12 +126,12 @@ export default {
         display: flex;
         align-items: center;
         position: relative;
-        span {
-          margin-left: 16px;
-          margin-right: 30px;
+        .wellcom {
+          margin-left: 6px;
+          margin-right: 20px;
         }
         .loginout {
-          font-style: normal;
+          // font-style: normal;
           cursor: pointer;
         }
         .user-avatar {

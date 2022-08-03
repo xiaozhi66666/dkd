@@ -134,7 +134,7 @@ export default {
       this.loginForm.clientToken = getNum()
       try {
         const res = await getCodeImgAPI(this.loginForm.clientToken)
-        console.log(res)
+        // console.log(res)
         // 将获取到的图片地址给图片的src
         // console.log(res)
         // 将blob格式的文件转换为可识别的base格式文件  URL.createObjectURL(blob)
@@ -147,7 +147,6 @@ export default {
     },
     // 登录
     login() {
-      this.loading = true
       // 添加判断，如果校验通过，就发送请求获取验证码
       this.$refs.loginForm.validate(async (result) => {
         //没通过，return
@@ -155,6 +154,8 @@ export default {
           this.$message.error('请输入验证码！')
           return
         }
+        // 校验通过，打开loading状态
+        this.loading = true
         // 校验通过发请求
         // 触发存储user/token的action
         // this.$dispatch返回一个promise
