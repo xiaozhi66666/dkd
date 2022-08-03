@@ -14,7 +14,10 @@
 .el-upload__input {
   display: none;
 }
-
+// 加大字体图标的字号
+.svg-icon {
+  font-size: 16px;
+}
 
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {

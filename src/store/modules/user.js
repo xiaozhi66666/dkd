@@ -36,8 +36,6 @@ export default {
     },
     // 获取用户信息
     async getUserInfo(context) {
-      console.log('getUserInfo')
-      console.log(Cookies.get('userId'))
       const userInfo = await getUserInfoAPI(Cookies.get('userId'))
       // console.log(userInfo)
       // console.log(userInfo)
